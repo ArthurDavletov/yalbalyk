@@ -68,7 +68,7 @@ def start_game(screen):
         screen.blit(bg_ingame, (0, 0))
         screen.blit(Data.backgrounds[background % len(Data.backgrounds)], (214, 38))
         screen.blit(Data.fishing_rods[current_fishing_rod % len(Data.fishing_rods)], (25, 24))
-        screen.blit(Data.hooks[current_hook  % len(Data.fishing_rods)], (25, 146))
+        screen.blit(Data.hooks[current_hook % len(Data.fishing_rods)], (25, 146))
         UI.print_text(screen, str(sell_price), 805, 434, 25, [255, 244, 0])
         UI.print_text(screen, str(money), 115, 280, 20, [0, 0, 0])
         UI.print_text(screen, str(current_fishing_rod), 88, 355, 13, [0, 0, 0])

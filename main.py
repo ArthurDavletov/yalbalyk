@@ -61,7 +61,7 @@ def start_game(screen):
             fishes.append([res[0].split(",")[i], res[1].split(",")[i]])
             fishes_for_draw.append(pygame.transform.scale(pygame.image.load(Data.fishes[int(res[0].split(",")[i])]),
                                    (104, 39)))
-            sell_price += res[1].split(",")[i]
+            sell_price += int(res[1].split(",")[i])
     while game_running:
         screen.blit(bg_ingame, (0, 0))
         screen.blit(Data.backgrounds[background % len(Data.backgrounds)], (214, 38))

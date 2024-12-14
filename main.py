@@ -115,7 +115,7 @@ def start_game(screen):
                 achivs[5] = "1"
                 cur.execute("UPDATE Inventory SET achiv = '{}' WHERE Player_ID = '1'".format(",".join(achivs)))
             #гэмблинг на поимку с шансом, увеличивающимся каждую секунду
-            if not fish_founded and random.randint(0, 100) > 100 - (time.time() - timer) - current_hook * 15 and int(last_time) < int(time.time()):
+            if not fish_founded and random.randint(0, 100) > 100 - (time.time() - timer) - current_hook * 8 and int(last_time) < int(time.time()):
                 fish_founded = True
                 fishing_progress = 0
             if fish_founded:
@@ -156,13 +156,13 @@ def start_game(screen):
                     cur.execute("UPDATE Inventory SET fish_pool = '{}' WHERE Player_ID = '1'".format(ans))
                     cur.execute("UPDATE Inventory SET price_pool = '{}' WHERE Player_ID = '1'".format(ans2))
             last_time = time.time()
+        con.commit()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 con.commit()
                 con.close()
                 game_running = False
         pygame.display.update()
-        con.commit()
     return
 
 

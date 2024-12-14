@@ -1,3 +1,5 @@
+import math
+
 import pygame
 import main
 
@@ -9,6 +11,19 @@ def print_text(screen, message, x, y, font_size, font_color=(0, 0, 0), font_type
     font_type = pygame.font.Font(font_type, font_size)
     text = font_type.render(message, True, font_color)
     screen.blit(text, (x, y))
+
+
+class Mouse:
+    def __init__(self, mouse):
+        self.mouse = mouse
+
+    def fishing(self, screen, fishing_road, fish_pos):
+        mouse_pos = self.mouse.get_pos()
+        if 250 < mouse_pos[0] < 680 and 50 < mouse_pos[1] < 380:
+            pygame.draw.circle(screen, color="White", center=self.mouse.get_pos(), radius=fishing_road, width=4)
+            if math.sqrt((mouse_pos[0] - fish_pos[0]) ** 2 + (mouse_pos[1] - fish_pos[1]) ** 2) <= fishing_road:
+                return True
+            return False
 
 
 class Button:

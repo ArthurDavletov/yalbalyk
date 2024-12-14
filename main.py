@@ -40,6 +40,7 @@ def start_game(screen):
     up_hook_butt = UI.Button(140, 50, 30, 370)
     up_rod_butt = UI.Button(140, 50, 30, 306)
     bg_butt = UI.Button(260, 30, 375, 470)
+    achivs_display = UI.Button(168, 26, 212, 2)
     timer = 0
     last_time = 0
     fishing_window = pygame.image.load("Source/Fishing Window.png")
@@ -55,6 +56,7 @@ def start_game(screen):
     money = cur.execute("SELECT money FROM Inventory WHERE Player_ID='1'").fetchone()[0]
     fishes = []
     fishes_for_draw = []
+    achivs = cur.execute("SELECT achiv FROM Inventory WHERE Player_ID='1'").fetchone()[0].split(',')
     background = 0
     if res[0] != "" or res[0] is not None:
         for i in range(len(res[0].split(",")) - 1):
@@ -71,6 +73,12 @@ def start_game(screen):
         UI.print_text(screen, str(money), 115, 280, 20, [0, 0, 0])
         UI.print_text(screen, str(current_fishing_rod), 88, 355, 13, [0, 0, 0])
         UI.print_text(screen, str(current_hook), 88, 418, 13, [0, 0, 0])
+        achivs_display.show_achiv(screen)
+        for i in range(len(achivs)):
+            pygame.draw.rect(screen, [0, 0, 0], [212 + 28 * i, 2, 26, 26], 2)
+            if achivs[i] == "1":
+                pygame.draw.line(screen, [0, 255, 0], (212 + 28 * i, 10), (224 + 28 * i, 26), 3)
+                pygame.draw.line(screen, [0, 255, 0], (224 + 28 * i, 26), (239 + 28 * i, 2), 3)
         if bg_butt.change_bg():
             background += 1
         if sell_butt.sell(cur, sell_price):
@@ -79,9 +87,13 @@ def start_game(screen):
             money += sell_price
             sell_price = 0
         if up_rod_butt.up_rod(cur):
+            achivs[2] = "1"
+            cur.execute("UPDATE Inventory SET achiv = '{}' WHERE Player_ID = '1'".format(",".join(achivs)))
             money -= 100
             current_fishing_rod += 1
         if up_hook_butt.up_hook(cur):
+            achivs[3] = "1"
+            cur.execute("UPDATE Inventory SET achiv = '{}' WHERE Player_ID = '1'".format(",".join(achivs)))
             money -= 100
             current_hook += 1
         x = 21
@@ -92,10 +104,16 @@ def start_game(screen):
             fish_founded = False
             if len(fishes) < 7:
                 is_fishing = fishing_butt.draw_fishing(screen)
+            else:
+                achivs[1] = "1"
+                cur.execute("UPDATE Inventory SET achiv = '{}' WHERE Player_ID = '1'".format(",".join(achivs)))
             if is_fishing:
                 timer = time.time()
         else:
             is_fishing = not infishing_butt.draw_fishing(screen)
+            if not is_fishing and fish_founded:
+                achivs[5] = "1"
+                cur.execute("UPDATE Inventory SET achiv = '{}' WHERE Player_ID = '1'".format(",".join(achivs)))
             #гэмблинг на поимку с шансом, увеличивающимся каждую секунду
             if not fish_founded and random.randint(0, 100) > 100 - (time.time() - timer) - current_hook * 15 and int(last_time) < int(time.time()):
                 fish_founded = True
@@ -117,10 +135,15 @@ def start_game(screen):
                 pygame.draw.rect(screen, [255, 201, 14], [450, 390, 240 * (fishing_progress / 100), 60])
                 pygame.draw.rect(screen, [255, 127, 39], [450, 390, 240, 60], 3)
                 if fishing_progress >= 100:
+                    achivs[0] = "1"
+                    cur.execute("UPDATE Inventory SET achiv = '{}' WHERE Player_ID = '1'".format(",".join(achivs)))
                     is_fishing = False
                     infishing_butt.flag = False
                     fishing_butt.flag = True
                     z1 = random.randint(0, len(Data.fishes) - 1)
+                    if z1 == 2:
+                        achivs[4] = "1"
+                        cur.execute("UPDATE Inventory SET achiv = '{}' WHERE Player_ID = '1'".format(",".join(achivs)))
                     z2 = random.randint(15, 30)
                     fishes.append([z1, z2])
                     sell_price += z2

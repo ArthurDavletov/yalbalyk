@@ -1,6 +1,8 @@
 import math
 
 import pygame
+
+import Data
 import main
 
 
@@ -116,3 +118,8 @@ class Button:
         else:
             self.flag = True
         return False
+
+    def show_achiv(self, screen):
+        mouse = pygame.mouse.get_pos()
+        if self.x <= int(mouse[0]) <= int(self.x + self.width - 5) and self.y < int(mouse[1]) < self.y + self.height:
+            print_text(screen, Data.achivs[int((mouse[0] - self.x) / (self.width / len(Data.achivs)))], 420, 5, 15)

@@ -121,8 +121,8 @@ def start_game(screen):
             if fish_founded:
                 screen.blit(fishing_window, (250, 50))
                 if int(last_time) < int(time.time()):
-                    movement_y = random.randint(-2 + current_hook, 2 - current_hook)
-                    movement_x = random.randint(-2 + current_hook, 2 - current_hook)
+                    movement_y = random.randint(-2, 2)
+                    movement_x = random.randint(-2, 2)
                 if int(last_time / 0.02) < int(time.time() / 0.02):
                     fish_pos = ((fish_pos[0] + movement_x) % 375, (fish_pos[1] + movement_y) % 300)
                 screen.blit(fish, (fish_pos[0] + 255, fish_pos[1] + 55))

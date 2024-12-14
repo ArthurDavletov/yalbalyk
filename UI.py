@@ -7,8 +7,8 @@ import main
 # ВСЕ, ЧТО ЗАКОММЕНЧЕНО, НУЖНО НА СЛУЧАЙ, ЕСЛИ КНОПКУ НАДО БУДЕТ ОТРИСОВЫВАТЬ
 
 
-def print_text(screen, message, x, y, font_size, font_color=(0, 0, 0), font_type="Palatino Linotype.ttf"):
-    font_type = pygame.font.Font(font_type, font_size)
+def print_text(screen, message, x, y, font_size, font_color=(0, 0, 0), font_type="arial"):
+    font_type = pygame.font.SysFont(font_type, font_size)
     text = font_type.render(message, True, font_color)
     screen.blit(text, (x, y))
 
@@ -48,10 +48,67 @@ class Button:
             if click[0] == 1:
                 main.start_game(screen)
 
+    def sell(self, cur, price):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if self.x <= int(mouse[0]) <= int(self.x + self.width) and self.y < int(mouse[1]) < self.y + self.height:
+            if click[0] == 1:
+                money = cur.execute("SELECT money FROM Inventory WHERE Player_ID='1'").fetchone()[0]
+                cur.execute("UPDATE Inventory SET money = '{}' WHERE Player_ID = '1'".format(money + price))
+                cur.execute("UPDATE Inventory SET fish_pool = '' WHERE Player_ID = '1'")
+                cur.execute("UPDATE Inventory SET price_pool = '' WHERE Player_ID = '1'")
+                return True
+        return False
+
     def draw_fishing(self, screen):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         screen.blit(self.button, (self.x, self.y))
+        if self.x <= int(mouse[0]) <= int(self.x + self.width) and self.y < int(mouse[1]) < self.y + self.height:
+            if click[0] == 1 and self.flag:
+                self.flag = False
+                return True
+        else:
+            self.flag = True
+        return False
+
+    def up_hook(self, cur):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if self.x <= int(mouse[0]) <= int(self.x + self.width) and self.y < int(mouse[1]) < self.y + self.height:
+            if click[0] == 1 and self.flag:
+                self.flag = False
+                money = cur.execute("SELECT money FROM Inventory WHERE Player_ID='1'").fetchone()[0]
+                if money < 100:
+                    return False
+                cur.execute("UPDATE Inventory SET money = '{}' WHERE Player_ID = '1'".format(money - 100))
+                hook = cur.execute("SELECT hook FROM Inventory WHERE Player_ID='1'").fetchone()[0]
+                cur.execute("UPDATE Inventory SET hook = '{}' WHERE Player_ID = '1'".format(hook + 1))
+                return True
+        else:
+            self.flag = True
+        return False
+
+    def up_rod(self, cur):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if self.x <= int(mouse[0]) <= int(self.x + self.width) and self.y < int(mouse[1]) < self.y + self.height:
+            if click[0] == 1 and self.flag:
+                self.flag = False
+                money = cur.execute("SELECT money FROM Inventory WHERE Player_ID='1'").fetchone()[0]
+                if money < 100:
+                    return False
+                cur.execute("UPDATE Inventory SET money = '{}' WHERE Player_ID = '1'".format(money - 100))
+                rod = cur.execute("SELECT rod FROM Inventory WHERE Player_ID='1'").fetchone()[0]
+                cur.execute("UPDATE Inventory SET rod = '{}' WHERE Player_ID = '1'".format(rod + 1))
+                return True
+        else:
+            self.flag = True
+        return False
+
+    def change_bg(self):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
         if self.x <= int(mouse[0]) <= int(self.x + self.width) and self.y < int(mouse[1]) < self.y + self.height:
             if click[0] == 1 and self.flag:
                 self.flag = False

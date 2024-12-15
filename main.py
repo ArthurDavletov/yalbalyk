@@ -225,10 +225,9 @@ def start_game(screen):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Ялбалык")
     t2 = threading.Thread(target = music_on, daemon = True)
-    print(0)
     t2.start()
-    print(1)
     start_menu(screen)
     pygame.quit()
     if isinstance(driver, webdriver.Firefox):

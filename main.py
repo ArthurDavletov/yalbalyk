@@ -14,6 +14,37 @@ bg_menu = pygame.image.load("Source/Main_Menu.png")
 bg_ingame = pygame.image.load("Source/GAME_UI.png")
 
 
+class ProgressBarColor:
+    __slots__ = ("__progress", "__colors")
+    __obj = None
+    def __new__(cls, progress: int = 0):
+        if cls.__obj is None:
+            cls.__obj = super(ProgressBarColor, cls).__new__(cls)
+        return cls.__obj
+
+    def __init__(self):
+        self.__progress = 0
+        self.__colors = [255, 0, 0]
+
+    def update(self, progress: int):
+        if progress == self.__progress:
+            return
+        diff = abs(progress - self.__progress)
+        color_change = int(255 / 100 * diff)
+        if progress > self.__progress:
+            self.__colors[0] = max(0, self.__colors[0] - color_change)
+            self.__colors[1] = min(255, self.__colors[1] + color_change)
+        else:
+            self.__colors[0] = min(255, self.__colors[0] + color_change)
+            self.__colors[1] = max(0, self.__colors[1] - color_change)
+        self.__progress = progress
+
+    @property
+    def colors(self):
+        return self.__colors
+
+
+
 def start_menu(screen):
     game_running = True
     start_butt = UI.Button(210, 70, 30, 400)
@@ -119,6 +150,7 @@ def start_game(screen):
                 fish_founded = True
                 fishing_progress = 0
             if fish_founded:
+                pb_color = ProgressBarColor()
                 screen.blit(fishing_window, (250, 50))
                 if int(last_time) < int(time.time()):
                     movement_y = random.randint(-2, 2)
@@ -132,7 +164,8 @@ def start_game(screen):
                 elif fishing_progress > 0:
                     if int(last_time / 0.02) < int(time.time() / 0.02):
                         fishing_progress -= 1
-                pygame.draw.rect(screen, [255, 201, 14], [450, 390, 240 * (fishing_progress / 100), 60])
+                pb_color.update(fishing_progress)
+                pygame.draw.rect(screen, pb_color.colors, [450, 390, 240 * (fishing_progress / 100), 60])
                 pygame.draw.rect(screen, [255, 127, 39], [450, 390, 240, 60], 3)
                 if fishing_progress >= 100:
                     achivs[0] = "1"

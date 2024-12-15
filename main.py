@@ -1,7 +1,12 @@
 import random
 import time
+import threading
 
 import pygame
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver import ActionChains
 import sqlite3
 
 import Data
@@ -12,7 +17,7 @@ HEIGHT = 503
 
 bg_menu = pygame.image.load("Source/Main_Menu.png")
 bg_ingame = pygame.image.load("Source/GAME_UI.png")
-
+driver: webdriver.Firefox | None = None
 
 class ProgressBarColor:
     __slots__ = ("__progress", "__colors")
@@ -44,6 +49,26 @@ class ProgressBarColor:
         return self.__colors
 
 
+def music_on():
+    try:
+        global driver
+        options = Options()
+        options.add_argument("--headless")
+        driver = webdriver.Firefox(options = options)
+        driver.get("https://lofiradio.ru/")
+        driver.find_element(By.ID, "vidio_toggle").click()
+        driver.find_element(By.ID, "lunaradiobuttonvolumeoff").click()
+        move = ActionChains(driver)
+        thumb = driver.find_element(By.ID, "lunaradiovolumegrab")
+        driver.find_element(By.ID, "lunaradiobuttonplay").click()
+        for position in range(0, 100 + 1, 5):
+            move.click_and_hold(thumb).move_by_offset(20, 0).release().perform()
+            time.sleep(0.1)
+        # while True:
+        #     pass
+    except:
+        pass
+
 
 def start_menu(screen):
     game_running = True
@@ -55,8 +80,6 @@ def start_menu(screen):
             if event.type == pygame.QUIT:
                 game_running = False
         pygame.display.update()
-    return
-
 
 def start_game(screen):
     con = sqlite3.connect("DATABASE.db")
@@ -202,5 +225,11 @@ def start_game(screen):
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    t2 = threading.Thread(target = music_on, daemon = True)
+    print(0)
+    t2.start()
+    print(1)
     start_menu(screen)
     pygame.quit()
+    if isinstance(driver, webdriver.Firefox):
+        driver.quit()

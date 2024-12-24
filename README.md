@@ -14,18 +14,24 @@ python -m venv .venv
 
 ### Linux
 
-```powershell
+```shell
 python3 -m venv .venv
 ```
 
-```powershell
+```shell
 source ./.venv/Scripts/activate.sh
 ```
 
 ## Установка библиотек:
 
-```powershell
+```shell
 pip install -r requirements.txt
+```
+
+## Запуск игры
+
+```shell
+python main.py
 ```
 
 ## Как работать над кодом?
@@ -39,5 +45,4 @@ pip install -r requirements.txt
 git clone git@github.com:ArthurDavletov/disk_explorer.git
 ```
 
-Если делать по-умному, то нужно создать SSH-ключ на своём ПК и внести его в свой GitHub.
-Если надо, спросите меня, как это сделать
+# Приятной игры! ♥♥♥
